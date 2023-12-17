@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="Project_XO.css">
+    <script src="Project_XO.js"></script>
+    <title>Tic Tac Toe</title>
+</head>
+<body>
+    
+    <div class="game">
+       
+        <div class="title"><span>X O</span> GAME</div>
+        <div class="square" id="item1" onclick="game(this.id)"></div>
+        <div class="square" id="item2" onclick="game(this.id)"></div>
+        <div class="square" id="item3" onclick="game(this.id)"></div>
+
+        <div class="square" id="item4" onclick="game(this.id)"></div>
+        <div class="square" id="item5" onclick="game(this.id)"></div>
+        <div class="square" id="item6" onclick="game(this.id)"></div>
+
+        <div class="square" id="item7" onclick="game(this.id)"></div>
+        <div class="square" id="item8" onclick="game(this.id)"></div>
+        <div class="square" id="item9" onclick="game(this.id)"></div>
+        
+        <div class="reset">Reset</div>
+
+
+    </div>
+
+    <style>
+      .game{
+    width: 251px;
+    font-family: system-ui;
+    text-align: center;
+    color: white;
+    margin: auto;
+    font-weight: 500;
+    position: relative;
+}
+
+.title{
+    background: #9B59B6;
+    padding: 5px 0;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 2px solid #D7BDE2;
+}
+span{
+    color:#FFF400;
+}
+.square{
+    width: 80px;
+    height: 80px;
+    background: #9B59B6;
+    float: left;
+    border-radius: 5px;
+    border: 2px solid #D7BDE2;
+    font-size: 50px;
+    transition: .5s;
+    cursor: grab;
+}
+.square:hover{
+    background: #D2B4DE;
+}
+.reset:hover{
+    background: #D2B4DE;
+}
+.reset{
+    background: #9B59B6;
+
+    padding: 5px ;
+    margin: 5px ;
+    border-radius: 5px;
+    border: 2px solid #D7BDE2;
+    position: absolute;
+    font-size: 10px;
+    left: 255px;
+    top: 0;
+    cursor: pointer;
+
+}
+    </style>
+    <script>
+
+    let title = document.querySelector('.title')
+    let turn = 'x';
+    let squares = [];
+    function win(num1,num2,num3)
+    {
+        title.innerHTML = `${squares[num1]} Winner`;
+        document.getElementById('item'+num1).style.background = '#4A235A'
+        document.getElementById('item'+num2).style.background = '#4A235A'
+        document.getElementById('item'+num3).style.background = '#4A235A'
+
+        setInterval(function(){title.innerHTML += '.'},900)
+        setTimeout(function(){location.reload()},4000)
+         
+    }
+    function Winner()
+    {
+     for( x = 1 ; x < 10 ; x++) 
+     {
+        squares[x] = document.getElementById('item' + x).innerHTML;
+     }
+     
+     
+     if(squares[1] == squares[2] && squares[2] == squares[3] && squares[1] !='')
+     {
+        win(1,2,3)
+     }
+     else if(squares[4] == squares[5] && squares[5] == squares[6] && squares[5] !='')
+     {
+        win(4,5,6)
+     }
+     else if(squares[7] == squares[8] && squares[8] == squares[9] && squares[9] !='')
+     {
+        win(7,8,9)
+     }
+
+
+     else if(squares[1] == squares[4] && squares[4] == squares[7] && squares[1] !='')
+     {
+        win(1,4,7)
+     }
+     else if(squares[2] == squares[5] && squares[5] == squares[8] && squares[5] !='')
+     {
+        win(2,5,8)
+     }
+     else if(squares[3] == squares[6] && squares[6] == squares[9] && squares[9] !='')
+     {
+        win(3,6,9)
+     }
+
+
+     else if(squares[1] == squares[5] && squares[5] == squares[9] && squares[1] !='')
+     {
+        win(1,5,9)
+     }
+     else if(squares[3] == squares[5] && squares[5] == squares[7] && squares[5] !='')
+     {
+        win(3,5,7)
+     }
+
+
+     
+    }
+
+    function game(id){
+        let element = document.getElementById(id)
+        if(turn === 'x' && element.innerHTML == ''){
+            element.innerHTML = 'X'
+            turn = 'o'
+            title.innerHTML = 'O'
+        } 
+        else if (turn === 'o' && element.innerHTML == '')
+        {
+            element.innerHTML = 'O'
+            turn = 'x'
+            title.innerHTML = 'X'
+        }
+        Winner();
+    }
+    let rest = document.querySelector('.reset')
+    
+    rest.onclick = function(){
+        location.reload()
+    }
+
+
+
+    </script>
+
+
+
+</body>
+</html>

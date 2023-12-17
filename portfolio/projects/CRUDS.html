@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="CRUDS.css">
+    <title>CRUDS</title>
+</head>
+<body>
+    
+    <div class="crud">
+
+        <div class="head">
+            <h2>C.R.U.D.S</h2>
+            <p>نظام إدارة المنتجات</p>
+        </div>
+
+        <div class="inputs">
+            <input placeholder="العنوان" type="text" id="title">
+           
+            <div class="price">
+                <input onkeyup="getTotal()" placeholder="السعر" type="number" id="price">
+                <input onkeyup="getTotal()" placeholder="الضرائب" type="number" id="taxes">
+                <input onkeyup="getTotal()" placeholder="الاعلانات" type="number" id="ads">
+                <input onkeyup="getTotal()" placeholder="الخصم" type="number" id="discount">
+                <small id="total"></small>
+            </div>
+            
+            <input placeholder="عدد المنتجات" type="number" id="count">
+            <input placeholder="نوع المنتجات" type="text" id="category">
+            <button id="submit">إنشاء</button>
+        </div>
+
+        <div class="outputs">
+            <div class="searchBlock">
+                <input onkeyup="searchData(this.value)" type="text" id="search" placeholder="البحث">
+                <div class="btnSearch">
+                    <button onclick="getSearchMod(this.id)" id="searchByTitle">البحث بالعنوان</button>
+                    <button onclick="getSearchMod(this.id)" id="searchByCategory">البحث بالنوع</button>
+                </div>
+            </div>
+            <div id="deleteAll"></div>
+            <table>
+                <tr>
+                    <th>رقم المنتج</th>
+                    <th>العنوان</th>
+                    <th>السعر</th>
+                    <th>الضرائب</th>
+                    <th>الاعلانات</th>
+                    <th>الخصم</th>
+                    <th>المجموع</th>
+                    <th>نوع المنتج</th>
+                    <th>تحديث</th>
+                    <th>حذف</th>
+                </tr>
+                <tbody id="tbody">
+
+
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+
+<style>
+    *{
+    margin: 0;
+    padding: 0;
+}
+body{
+    background: #ecedee;
+    color: black;
+    font-family: system-ui;
+    direction: rtl;
+
+}
+p{
+    font-weight: bold;
+}
+.crud{
+    width: 80%;
+    margin: auto;
+}
+.head{
+    text-align: center;
+    text-transform: uppercase;
+    margin: 10px 0;
+}
+input{
+    width: 100%;
+    height: 40px;
+    outline: none;
+    border: none;
+    background: #ffffffe3;
+    margin: 4px 0;
+    padding: 4px;
+    border-radius: 4px;
+    color: black;
+    font-family: system-ui;
+    transition: .3s;
+}
+input::placeholder{
+    color: gray;
+    font-family: system-ui;
+}
+input:focus{
+    background: #c2bec9;
+    transform: scale(1.03);
+}
+.price input{
+    width: 20%;
+}
+#total{
+    background: #e40000;
+    color: white;
+    padding: 5px 2px;
+    border-radius: 4px;
+}
+#total::before{
+    content: "المجموع : ";
+}
+#deleteAll{
+    margin: 10px 0;
+}
+button{
+    width: 100%;
+    height: 30px;
+    border: none;
+    background: #3310ff;
+    color: #fff;
+    font-family: system-ui;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: .3s;
+}
+button:hover{
+    background: #3366ff;
+    letter-spacing: 1px;
+}
+.btnSearch{
+    display: flex;
+    justify-content: space-between;
+}
+.btnSearch button{
+    width: 45%;
+}
+table{
+    width: 100%;
+    text-align: center;
+    margin: 10px 0;
+}
+th,td{
+    padding: 5px;
+}
+
+
+
+</style>
+    
+<script>
+    
+
+
+    let title = document.getElementById('title')
+    let price = document.getElementById('price')
+    let taxes = document.getElementById('taxes')
+    let ads = document.getElementById('ads')
+    let discount = document.getElementById('discount')
+    let total = document.getElementById('total')
+    let count = document.getElementById('count')
+    let category = document.getElementById('category')
+    let submit = document.getElementById('submit')
+
+    let mod = 'create';
+    let tmp;
+
+    //get total
+    function getTotal(){
+       
+        if(price.value !=''){
+            taxes.value = price.value * 0.15
+            let result = (+price.value + +taxes.value + +ads.value) - +discount.value
+            total.innerHTML = result
+            total.style.background = 'green'
+        }
+        else{
+            
+            total.innerHTML = ''
+            total.style.background = '#e40000'
+            taxes.value = ''
+        }
+    }
+
+    //create data
+    let dataPro = [];
+    if(localStorage.product != null){
+       dataPro = JSON.parse(localStorage.product)
+    }else{
+        let dataPro = [];
+    }
+    submit.onclick = function(){
+        let newPro = {
+            title:title.value.toLowerCase(),
+            price:price.value,
+            taxes:taxes.value,
+            ads:ads.value,
+            discount:discount.value,
+            total:total.innerHTML,
+            count:count.value,
+            category:category.value.toLowerCase(),
+        }
+        // count
+        if(price.value !=''
+        && title.value !=''
+        && category.value != ''
+        && newPro.count < 100){
+            if(mod === 'create'){
+            if(newPro.count > 1){
+            for(let x = 0 ; x < newPro.count ; x++){
+                dataPro.push(newPro)
+            }
+            }else{
+                dataPro.push(newPro)
+            }
+        }
+            else{
+            dataPro[tmp] = newPro
+            mod = 'create'
+            submit.innerHTML = 'إنشاء'
+            count.style.display = 'block'
+        }
+            clearData()
+        }
+
+        total.style.background = '#e40000'
+
+        // save localstorage
+        localStorage.setItem('product', JSON.stringify(dataPro))
+        
+
+        showData()
+    }
+
+    // clear data
+    function clearData(){
+        title.value = ''
+        price.value = ''
+        taxes.value = ''
+        ads.value = ''
+        discount.value = ''
+        total.innerHTML = ''
+        count.value = ''
+        category.value = ''
+    }
+
+    // read data
+    function showData(){
+        getTotal()
+        let table = ''
+        for(let x = 0 ; x < dataPro.length ; x++ ){
+            table +=`
+            <tr>
+                <td>${x+1}</td>
+                <td>${dataPro[x].title}</td>
+                <td>${dataPro[x].price+' ريال'}</td>
+                <td>${dataPro[x].taxes+' ريال'}</td>
+                <td>${dataPro[x].ads+' ريال'}</td>
+                <td>${dataPro[x].discount+' ريال'}</td>
+                <td>${dataPro[x].total+' ريال'}</td>
+                <td>${dataPro[x].category}</td>
+                <td><button onclick="updateData(${x})" id="update">تحديث</button></td>
+                <td><button onclick="deleteData(${x})" id="delete">حذف</button></td>
+                </tr>
+                `
+        }
+
+        document.getElementById('tbody').innerHTML = table
+        let deleteAll = document.getElementById('deleteAll')
+        if(dataPro.length > 0){
+            deleteAll.innerHTML = `<button onclick="deleteAll()">حذف الكل (${dataPro.length})</button>`
+        }else
+        {
+            deleteAll.innerHTML = ''
+        }
+    }
+    showData()
+
+    // delete data
+    function deleteData(x){
+        dataPro.splice(x,1)
+        localStorage.product = JSON.stringify(dataPro)
+        showData()
+
+    }
+
+    function deleteAll(){
+        dataPro.splice(0)
+        localStorage.clear()
+        showData()
+
+    }
+
+    // update data
+    function updateData(x){
+        title.value = dataPro[x].title
+        price.value = dataPro[x].price
+        taxes.value = dataPro[x].taxes
+        ads.value = dataPro[x].ads
+        getTotal()
+        discount.value = dataPro[x].discount
+        category.value = dataPro[x].category
+        submit.innerHTML = 'تحديث'
+        count.style.display = 'none'
+        tmp = x
+        mod = 'update'
+        scroll({
+            top:0,
+            behavior:"smooth"
+        })
+    }
+    
+    // search data
+    let searchMod = 'title';
+
+    function getSearchMod(id){
+
+        let search = document.getElementById('search')
+
+        if(id == 'searchByTitle'){
+             searchMod = 'title'
+            search.placeholder = 'البحث بالعنوان'
+        }else{
+            searchMod = 'category'
+            search.placeholder = 'البحث بالنوع'
+        }
+        search.focus()
+        search.value = ''
+        showData
+    }
+
+    function searchData(value)
+    {
+        let table = ''
+        for(let x = 0 ; x < dataPro.length ; x ++ ){
+        if(searchMod == 'title')
+        {
+
+            
+                if(dataPro[x].title.includes(value.toLowerCase())){
+                   
+                    table +=`
+                        <tr>
+                        <td>${x}</td>
+                        <td>${dataPro[x].title}</td>
+                        <td>${dataPro[x].price+' ريال'}</td>
+                        <td>${dataPro[x].taxes+' ريال'}</td>
+                        <td>${dataPro[x].ads+' ريال'}</td>
+                        <td>${dataPro[x].discount+' ريال'}</td>
+                        <td>${dataPro[x].total+' ريال'}</td>
+                        <td>${dataPro[x].category}</td>
+                        <td><button onclick="updateData(${x})" id="update">تحديث</button></td>
+                        <td><button onclick="deleteData(${x})" id="delete">حذف</button></td>
+                        </tr>
+                        `   
+                }
+            
+         }
+         
+         else{
+            
+                if(dataPro[x].category.includes(value.toLowerCase())){
+                   
+                    table +=`
+                        <tr>
+                        <td>${x}</td>
+                        <td>${dataPro[x].title}</td>
+                        <td>${dataPro[x].price+' ريال'}</td>
+                        <td>${dataPro[x].taxes+' ريال'}</td>
+                        <td>${dataPro[x].ads+' ريال'}</td>
+                        <td>${dataPro[x].discount+' ريال'}</td>
+                        <td>${dataPro[x].total+' ريال'}</td>
+                        <td>${dataPro[x].category}</td>
+                        <td><button onclick="updateData(${x})" id="update">تحديث</button></td>
+                        <td><button onclick="deleteData(${x})" id="delete">حذف</button></td>
+                        </tr>
+                        `         
+                }
+            
+         }
+        }
+         document.getElementById('tbody').innerHTML = table
+    }
+
+
+    
+</script>    
+</body>
+</html>
